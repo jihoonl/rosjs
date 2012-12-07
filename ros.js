@@ -1,4 +1,4 @@
-/** 
+/**
  * Ros.js can be included using <script src="ros.js"> or AMD.  The next few
  * lines provide support for both formats and are based on the Universal Module
  * Definition.
@@ -38,18 +38,36 @@
     // Socket Handling
     // ---------------
 
+    /**
+     * Emits a 'connection' event on WebSocket connection.
+     */
     function onOpen(event) {
       ros.emit('connection', event);
     };
 
+    /**
+     * Emits a 'close' event on WebSocket disconnection.
+     */
     function onClose(event) {
       ros.emit('close', event);
     };
 
+    /**
+     * Emits an 'error' event whenever there was an error.
+     */
     function onError(event) {
       ros.emit('error', event);
     };
 
+    /**
+     * If a message was compressed as a PNG image (a compression hack since
+     * gzipping over WebSockets is not supported yet), this function places the
+     * "image" in a canvas element then decodes the "image" as a Base64 string.
+     *
+     * @param data - object containing the PNG data.
+     * @param callback function with params:
+     *   * data - the uncompressed data
+     */
     function decompressPng(data, callback) {
       // Uncompresses the data before sending it through (use image/canvas to do so).
       var image = new Image();
@@ -162,8 +180,8 @@
      */
     ros.getTopics = function(callback) {
       var topicsClient = new ros.Service({
-        name        : '/rosapi/topics'
-      , serviceType : 'rosapi/Topics'
+        name        : '/rosapi/topics',
+        serviceType : 'rosapi/Topics'
       });
 
       var request = new ros.ServiceRequest();
@@ -238,12 +256,12 @@
         ros.idCounter++;
         var subscribeId = 'subscribe:' + topic.name + ':' + ros.idCounter;
         var call = {
-          op          : 'subscribe'
-        , id          : subscribeId
-        , type        : topic.messageType
-        , topic       : topic.name
-        , compression : topic.compression
-        , throttle_rate : topic.throttle_rate
+          op          : 'subscribe',
+          id          : subscribeId,
+          type        : topic.messageType,
+          topic       : topic.name,
+          compression : topic.compression,
+          throttle_rate : topic.throttle_rate
         };
 
         callOnConnection(call);
@@ -258,9 +276,9 @@
         ros.idCounter++;
         var unsubscribeId = 'unsubscribe:' + topic.name + ':' + ros.idCounter;
         var call = {
-          op    : 'unsubscribe'
-        , id    : unsubscribeId
-        , topic : topic.name
+          op    : 'unsubscribe',
+          id    : unsubscribeId,
+          topic : topic.name
         };
         callOnConnection(call);
       };
@@ -272,10 +290,10 @@
         ros.idCounter++;
         var advertiseId = 'advertise:' + topic.name + ':' + ros.idCounter;
         var call = {
-          op    : 'advertise'
-        , id    : advertiseId
-        , type  : topic.messageType
-        , topic : topic.name
+          op    : 'advertise',
+          id    : advertiseId,
+          type  : topic.messageType,
+          topic : topic.name
         };
         callOnConnection(call);
         topic.isAdvertised = true;
@@ -288,9 +306,9 @@
         ros.idCounter++;
         var unadvertiseId = 'unadvertise:' + topic.name + ':' + ros.idCounter;
         var call = {
-          op    : 'unadvertise'
-        , id    : unadvertiseId
-        , topic : topic.name
+          op    : 'unadvertise',
+          id    : unadvertiseId,
+          topic : topic.name
         };
         callOnConnection(call);
         topic.isAdvertised = false;
@@ -309,10 +327,10 @@
         ros.idCounter++;
         var publishId = 'publish:' + topic.name + ':' + ros.idCounter;
         var call = {
-          op    : 'publish'
-        , id    : publishId
-        , topic : topic.name
-        , msg   : message
+          op    : 'publish',
+          id    : publishId,
+          topic : topic.name,
+          msg   : message
         };
         callOnConnection(call);
       };
@@ -331,8 +349,8 @@
      */
     ros.getServices = function(callback) {
       var servicesClient = new ros.Service({
-        name        : '/rosapi/services'
-      , serviceType : 'rosapi/Services'
+        name        : '/rosapi/services',
+        serviceType : 'rosapi/Services'
       });
 
       var request = new ros.ServiceRequest();
@@ -403,10 +421,10 @@
         });
 
         var call = {
-          op      : 'call_service'
-        , id      : serviceCallId
-        , service : service.name
-        , args    : requestValues
+          op      : 'call_service',
+          id      : serviceCallId,
+          service : service.name,
+          args    : requestValues
         };
         callOnConnection(call);
       };
@@ -454,13 +472,13 @@
        */
       param.get = function(callback) {
         var paramClient = new ros.Service({
-          name        : '/rosapi/get_param'
-        , serviceType : 'rosapi/GetParam'
+          name        : '/rosapi/get_param',
+          serviceType : 'rosapi/GetParam'
         });
 
         var request = new ros.ServiceRequest({
-          name  : param.name
-        , value : JSON.stringify('')
+          name  : param.name,
+          value : JSON.stringify('')
         });
 
         paramClient.callService(request, function(result) {
@@ -476,13 +494,13 @@
        */
       param.set = function(value) {
         var paramClient = new ros.Service({
-          name        : '/rosapi/set_param'
-        , serviceType : 'rosapi/SetParam'
+          name        : '/rosapi/set_param',
+          serviceType : 'rosapi/SetParam'
         });
 
         var request = new ros.ServiceRequest({
-          name: param.name
-        , value: JSON.stringify(value)
+          name: param.name,
+          value: JSON.stringify(value)
         });
 
         paramClient.callService(request, function() {});
