@@ -525,6 +525,7 @@
     ros.authenticate = function(mac, client, dest, rand, t, level, end) {
       // create the request
       var auth = {
+        op     : 'auth',
         mac    : mac,
         client : client,
         dest   : dest,
