@@ -8,12 +8,18 @@
  */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['eventemitter2'], factory);
+    define(['eventemitter2','ws'], factory);
   }
   else {
-    root.ROS = factory(root.EventEmitter2);
+    if(WebSocket === undefined && typeof require === 'function') {
+      var WebSocket = require('ws');
+      root.ROS = factory(root.EventEmitter2,WebSocket);
+    }
+    else {
+      root.ROS = factory(root.EventEmitter2,root.WebSocket);
+    }
   }
-}(this, function (EventEmitter2) {
+}(this, function (EventEmitter2,WebSocket) {
 
   /**
    * Manages connection to the server and all interactions with
